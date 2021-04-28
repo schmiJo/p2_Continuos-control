@@ -43,8 +43,10 @@ class ActorNet(nn.Module):
         self.fc3 = nn.Linear(fc2_size, action_size)
 
         self.sigm = nn.Sigmoid()
+        self.tanh = nn.Tanh()
 
     def forward(self, state):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
-        return self.sigm(self.fc3(x))
+        # The tanh activation function restricts the output state between -1 and 1
+        return self.tanh(self.fc3(x))
