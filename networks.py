@@ -11,10 +11,9 @@ def hidden_init(layer):
     return (-lim, lim)
 
 
-
 class CriticNet(nn.Module):
 
-    def __init__(self, state_size, action_size, fc1_size=250, fc2_size=250, fc_3_size=120, seed=0):
+    def __init__(self, state_size, action_size, seed, fc1_size=250, fc2_size=250, fc_3_size=120):
         """Initialize the Neural Q network:
         This critic needs to map state action pairs to Q values
             Params:
@@ -49,8 +48,6 @@ class CriticNet(nn.Module):
         self.fc4.weight.data.uniform_(-3e-3, 3e-3)
 
     def forward(self, state, action):
-
-
         # add an extra dim for the batch normalization
         if state.dim() == 1:
             state = torch.unsqueeze(state, 0)
@@ -64,7 +61,7 @@ class CriticNet(nn.Module):
 
 
 class ActorNet(nn.Module):
-    def __init__(self, state_size, action_size, fc1_size=64, fc2_size=64, seed=0):
+    def __init__(self, state_size, action_size, seed, fc1_size=64, fc2_size=64):
         """Initialize the Actor ‚network:
             Params:
                 state_size -> size of the input layer
@@ -73,8 +70,6 @@ class ActorNet(nn.Module):
                 fc2 -> size of the second fully connected hidden layer
             """
         super(ActorNet, self).__init__()
-
-
 
         self.seed = torch.manual_seed(seed)
         self.fc1 = nn.Linear(state_size, fc1_size)
@@ -86,15 +81,12 @@ class ActorNet(nn.Module):
         self.tanh = nn.Tanh()
         self.reset_parameters()
 
-
     def reset_parameters(self):
         self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
         self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
 
-
     def forward(self, state):
-
         # add an extra dim for the batch normalization
         if state.dim() == 1:
             state = torch.unsqueeze(state, 0)
