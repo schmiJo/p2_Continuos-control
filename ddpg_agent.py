@@ -14,7 +14,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e6)  # replay buffer size
-BATCH_SIZE = 128  # minibatch size
+BATCH_SIZE = 100  # minibatch size
 GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
 LEARNING_RATE_ACTOR = 1.5e-4  # learning rate of the actor
@@ -200,11 +200,11 @@ class ReplayBuffer:
 
 
 class OUNoise:
-    """Ornstein-Uhlenbeck process.
+    """The Ornstein-Uhlenbeck process used to generate random noise.
     """
 
     def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.1):
-        """Initialize parameters and noise process."""
+        """Initialize parameters"""
         self.mu = mu * np.ones(size)
         self.theta = theta
         self.sigma = sigma
@@ -212,11 +212,11 @@ class OUNoise:
         self.reset()
 
     def reset(self):
-        """Reset the internal state (= noise) to mean (mu)."""
+        """Reset the internal state."""
         self.state = copy.copy(self.mu)
 
     def sample(self):
-        """Update internal state and return it as a noise sample."""
+        """Update internal state and return it as a noise sample"""
         x = self.state
         dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
         self.state = x + dx

@@ -9,7 +9,7 @@ The agent follows the dot pretty good, however it does not try to follow the mid
 agent who tries to stay in the middle of the target, the reward would have to be changed in such a way that the distance
 to the middle of the dot is inversely proportional.
 
-The Agent was trained within 290 episodes: <br>
+The Agent was trained within 220 episodes: <br>
 ![image info](./drawables/training.png)
 
 ## Learning Algorithm

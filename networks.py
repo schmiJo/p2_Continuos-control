@@ -31,9 +31,6 @@ class CriticNet(nn.Module):
 
         # The first layer only takes the states as input
         self.fc1 = nn.Linear(state_size, fc1_size)
-
-        # batch normalization on the state
-        self.bn1 = nn.BatchNorm1d(fc1_size)
         # The second layer takes the output of the first layer as well as the action as input
         self.fc2 = nn.Linear(fc1_size + action_size, fc2_size)
         self.fc3 = nn.Linear(fc2_size, 1)
@@ -50,7 +47,6 @@ class CriticNet(nn.Module):
             state = torch.unsqueeze(state, 0)
 
         x1 = F.relu(self.fc1(state))
-        x1 = self.bn1(x1)
         x = torch.cat((x1, action), dim=1)
         x = F.relu(self.fc2(x))
         return self.fc3(x)
@@ -72,8 +68,6 @@ class ActorNet(nn.Module):
         self.fc2 = nn.Linear(fc1_size, fc2_size)
         self.fc3 = nn.Linear(fc2_size, action_size)
 
-        # batch normalization on the state
-        self.bn1 = nn.BatchNorm1d(fc1_size)
         self.tanh = nn.Tanh()
         self.reset_parameters()
 
@@ -88,7 +82,7 @@ class ActorNet(nn.Module):
             state = torch.unsqueeze(state, 0)
 
         x = F.relu(self.fc1(state))
-        x = self.bn1(x)
+        #x = self.bn1(x)
         x = F.relu(self.fc2(x))
         # The tanh activation function restricts the output state between -1 and 1
         return self.tanh(self.fc3(x))
