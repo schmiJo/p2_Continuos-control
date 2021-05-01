@@ -13,12 +13,12 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
-BUFFER_SIZE = int(1e5)  # replay buffer size
+BUFFER_SIZE = int(1e6)  # replay buffer size
 BATCH_SIZE = 128  # minibatch size
 GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
 LEARNING_RATE_ACTOR = 1.5e-4  # learning rate of the actor
-LEARNING_RATE_CRITIC = 2e-4  # learning rate of the critic
+LEARNING_RATE_CRITIC = 2.1e-4  # learning rate of the critic
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -95,11 +95,12 @@ class Agent():
 
         # --- train the critic ---
         next_actions = self.actor_target(next_states)
+        # Get expected Q values from local critic by passing in both the states and the actions
+        Q_expected = self.critic_local.forward(states, actions)
+        # Get next expected Q values from local critic by passing in both the next_states and the next_actions
         next_Q_targets = self.critic_target(next_states, next_actions)
         # Compute Q targets for current states
         Q_targets = rewards + (gamma * next_Q_targets * (1 - dones))
-        # Get expected Q values from local critic by passing in both the states and the actions
-        Q_expected = self.critic_local.forward(states, actions)
         # Caclulate the loss function using the expected return and the target
         critic_loss = F.mse_loss(Q_expected, Q_targets)
         self.critic_optim.zero_grad()
