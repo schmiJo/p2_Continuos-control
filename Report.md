@@ -109,7 +109,7 @@ Just copying the values of the local network to the target network was observed 
 * The first layer has 128 nodes
 * The second layer has 128 nodes
 * The third layer has nodes corresponding to the action vector: in this case: 4
-* The activation function for the last layer is tanh, in order to sqeeze the output space between -1 and 1
+* The activation function for the last layer is tanh, in order to squeeze the output space between -1 and 1
 
 
 #### Optimizer
