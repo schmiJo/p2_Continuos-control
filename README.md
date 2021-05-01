@@ -18,7 +18,7 @@ Therefore the goal is to follow the goal area with the robotic arm.
 
 The state space consists of 33 dimensions and is continuous.
 
-The action space consists of 4 continuous actions, which control the arm.
+The action space consists of 4 continuous actions, which control the arm. 
 
 The Agent is trained using a DDPG algorithm. For further information on training please read the Report.md.
 
