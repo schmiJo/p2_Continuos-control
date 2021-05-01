@@ -13,12 +13,12 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
-BUFFER_SIZE = int(1e6)  # replay buffer size
+BUFFER_SIZE = int(1e5)  # replay buffer size
 BATCH_SIZE = 128  # minibatch size
-GAMMA = 0.992  # discount factor
+GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
-LEARNING_RATE_ACTOR = 2e-4  # learning rate of the actor
-LEARNING_RATE_CRITIC = 3e-4  # learning rate of the critic
+LEARNING_RATE_ACTOR = 1.5e-4  # learning rate of the actor
+LEARNING_RATE_CRITIC = 2e-4  # learning rate of the critic
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -47,7 +47,7 @@ class Agent():
         #  critic initialization
         self.critic_local = CriticNet(state_size, action_size, random_seed).to(device)
         self.critic_target = CriticNet(state_size, action_size, random_seed).to(device)
-        self.critic_optim = optim.Adam(self.critic_local.parameters(), lr=LEARNING_RATE_CRITIC)
+        self.critic_optim = optim.Adam(self.critic_local.parameters(), lr=LEARNING_RATE_CRITIC, weight_decay=0)
 
         # The weights of the target networks are updated with the weights of the local networks to start with the same shared state
         self.hard_update(self.actor_local, self.actor_target)
@@ -55,6 +55,9 @@ class Agent():
 
         # Initialize the ReplayBuffe
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
+
+        # Noise process
+        self.noise = OUNoise(action_size, random_seed)
 
     def step(self, state: np.ndarray, action: np.ndarray, reward: np.ndarray, next_state: np.ndarray,
              done: np.ndarray) -> None:
@@ -66,7 +69,7 @@ class Agent():
             experiences = self.memory.sample()
             self.learn(experiences, GAMMA)
 
-    def act(self, state: np.ndarray) -> np.ndarray:
+    def act(self, state: np.ndarray, add_noise: bool) -> np.ndarray:
         """The actor returns actions for given state as per current policy.
         Params
         ======
@@ -79,6 +82,10 @@ class Agent():
             # Aquire an action by passing the current state to the local actor network
             action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
+
+        # Add noise to the action
+        if add_noise:
+            action += self.noise.sample()
         return np.clip(action, -1, 1)
 
     def learn(self, experiences, gamma) -> None:
@@ -127,7 +134,7 @@ class Agent():
         """Saves the weights of the local networks
         (both the agent and the critic)"""
         torch.save(self.critic_local.state_dict(), path + 'critic')
-        torch.save(self.actor_local.state_dict(), path + 'critic')
+        torch.save(self.actor_local.state_dict(), path + 'actor')
 
     def restore_weights(self, path='./weights/') -> None:
         """Restore the saved local network weights to both the target and the local network"""
@@ -143,6 +150,9 @@ class Agent():
 
         self.actor_target.load_state_dict(torch.load(path + 'actor'))
         self.actor_target.eval()
+
+    def reset_noise(self):
+        self.noise.reset()
 
 
 class ReplayBuffer:
@@ -186,3 +196,27 @@ class ReplayBuffer:
     def __len__(self):
         """Return the current size of internal memory."""
         return len(self.memory)
+
+
+class OUNoise:
+    """Ornstein-Uhlenbeck process.
+    """
+
+    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.1):
+        """Initialize parameters and noise process."""
+        self.mu = mu * np.ones(size)
+        self.theta = theta
+        self.sigma = sigma
+        self.seed = random.seed(seed)
+        self.reset()
+
+    def reset(self):
+        """Reset the internal state (= noise) to mean (mu)."""
+        self.state = copy.copy(self.mu)
+
+    def sample(self):
+        """Update internal state and return it as a noise sample."""
+        x = self.state
+        dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
+        self.state = x + dx
+        return self.state
