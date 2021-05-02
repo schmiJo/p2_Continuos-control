@@ -137,7 +137,7 @@ The Learning rate for the actor optimizer is chosen to be: 0.00015
 
 ### Learning Rate Critic
 
-The Learning rate for the actor optimizer is chosen to be: 0.00021
+The Learning rate for the critic optimizer is chosen to be: 0.00021
 
 ### Tau
 
