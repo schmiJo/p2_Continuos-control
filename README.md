@@ -32,22 +32,42 @@ Check the following link for more details: <br>
 ###Prerequisites
 Python 3.6
 Unity
+Conda
 
 ##Installation:
 
-Clone the repsoitory
+1. Clone the repository
 ```
 https://github.com/schmiJo/p2_Continuos-control
 ```
-Install Jupyter Notebook
+2. Install Jupyter Notebook
 ```
 pip install jupyter
 ```
+3. Create and activate a new environment for Python 3.6
+* Linux or Mac
+```
+conda create --name drlnd python=3.6
+source activate drlnd
+```
+* Windows
+```
+conda create --name drlnd python=3.6
+activate drlnd
+```
+4. Install several dependencies 
+```
+pip install -r requirements.txt
+```
+5. Before running the Continuous_Control.ipynb change the kernel to match the drlnd environment by using the drop down Kernel menu.
 
-Then open the notebook Continuous_Control.ipynb
 
 Download the unity environment using the following link for macOs: <br>
 https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher.app.zip
+
+
+Mre instructions for the installation can be found under: <br>
+https://github.com/udacity/deep-reinforcement-learning#dependencies
 
 
 

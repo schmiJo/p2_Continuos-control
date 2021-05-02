@@ -135,7 +135,7 @@ The chosen value for gamma is 0.99
 
 The Learning rate for the actor optimizer is chosen to be: 0.00015
 
-### Learning Rate Actor
+### Learning Rate Critic
 
 The Learning rate for the actor optimizer is chosen to be: 0.00021
 
