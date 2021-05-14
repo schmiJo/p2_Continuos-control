@@ -156,7 +156,6 @@ protobuf==3.5.2
 psutil @ file:///opt/concourse/worker/volumes/live/ff72f822-991c-4030-4f3a-8c41d3ac4e4f/volume/psutil_1598370232375/work
 ptyprocess==0.6.0
 py @ file:///tmp/build/80754af9/py_1593446248552/work
-py-xbrl==1.1.3
 pycodestyle==2.6.0
 pycosat==0.6.3
 pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
